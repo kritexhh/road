@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Hydrolink Infrasolutions</title>
+<!-- FAVICON SVG inline -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%231B6FFF'/><path d='M16 4C11.6 4 8 11 8 17a8 8 0 0016 0c0-6-3.6-13-8-13zm0 3c2.4 0 6 5.5 6 10a6 6 0 01-12 0c0-4.5 3.6-10 6-10z' fill='white'/><circle cx='16' cy='17' r='2.5' fill='%2300C2FF'/></svg>"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet"/>
+<style>
+:root{--navy:#08122B;--blue:#1B6FFF;--blue2:#4B9FFF;--cyan:#00C2FF;--grey:#8898B3;--border:rgba(255,255,255,0.09);--border2:rgba(27,111,255,0.3);--glass:rgba(255,255,255,0.04);--glass2:rgba(255,255,255,0.09);--shadow:0 20px 60px rgba(0,0,40,0.5);--shadow-blue:0 8px 32px rgba(27,111,255,0.38);--r:20px;--rl:28px;--t:all 0.38s cubic-bezier(0.23,1,0.32,1)}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--navy);color:#fff;overflow-x:hidden}
+#bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");pointer-events:none;z-index:1;opacity:.45}
+
+/* ─── NAV ─── */
+nav{position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:1000;display:flex;align-items:center;justify-content:space-between;gap:1.5rem;padding:0 1.25rem 0 1rem;height:58px;width:min(94vw,1080px);background:rgba(8,18,43,.75);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid var(--border);border-radius:50px;box-shadow:0 4px 40px rgba(0,0,40,.4),inset 0 1px 0 rgba(255,255,255,.07);transition:var(--t)}
+nav.scrolled{background:rgba(8,18,43,.95);top:8px;box-shadow:0 8px 60px rgba(0,0,40,.7)}
+
+/* Logo mark */
+.logo-wrap{display:flex;align-items:center;gap:10px;cursor:pointer;flex-shrink:0;text-decoration:none}
+.logo-mark{width:36px;height:36px;flex-shrink:0;position:relative}
+.logo-mark svg{width:36px;height:36px}
+.logo-text{display:flex;flex-direction:column;line-height:1}
+.logo-text b{font-family:'Sora',sans-serif;font-size:.82rem;font-weight:700;letter-spacing:.12em;color:#fff}
+.logo-text small{font-size:.56rem;color:var(--grey);letter-spacing:.05em;margin-top:2px}
+
+.nav-links{display:flex;align-items:center;gap:.1rem;list-style:none}
+.nav-links a{font-size:.8rem;font-weight:500;color:var(--grey);padding:.4rem .82rem;border-radius:50px;cursor:pointer;text-decoration:none;transition:all .22s;white-space:nowrap}
+.nav-links a:hover{color:#fff;background:var(--glass2)}
+.nav-links a.active{color:#fff;background:rgba(27,111,255,.18)}
+.nbtn{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;border:none;padding:.52rem 1.2rem;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;transition:var(--t);box-shadow:var(--shadow-blue);flex-shrink:0;white-space:nowrap}
+.nbtn:hover{transform:translateY(-2px) scale(1.04);box-shadow:0 12px 36px rgba(27,111,255,.55)}
+
+/* ─── PAGES ─── */
+.page{display:none;position:relative;z-index:2;min-height:100vh}
+.page.active{display:block}
+
+/* ─── BUTTONS ─── */
+.btn-p{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;border:none;padding:.82rem 1.7rem;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;transition:var(--t);box-shadow:var(--shadow-blue);position:relative;overflow:hidden}
+.btn-p::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.15),transparent);opacity:0;transition:opacity .3s}
+.btn-p:hover{transform:translateY(-3px);box-shadow:0 16px 48px rgba(27,111,255,.55)}
+.btn-p:hover::after{opacity:1}
+.btn-g{background:rgba(255,255,255,.05);color:#fff;border:1px solid var(--border);padding:.82rem 1.7rem;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:500;cursor:pointer;transition:var(--t);backdrop-filter:blur(8px)}
+.btn-g:hover{background:var(--glass2);border-color:rgba(255,255,255,.22);transform:translateY(-2px)}
+
+/* ─── HERO ─── */
+.hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:3rem;padding:110px 6vw 70px;max-width:1380px;margin:0 auto}
+.hbadge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(27,111,255,.1);border:1px solid rgba(27,111,255,.28);padding:.32rem .88rem .32rem .48rem;border-radius:50px;margin-bottom:1.4rem}
+.hbdot{width:6px;height:6px;background:var(--cyan);border-radius:50%;box-shadow:0 0 8px var(--cyan);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 8px var(--cyan)}50%{box-shadow:0 0 20px var(--cyan),0 0 40px rgba(0,194,255,.4)}}
+.hbadge span{font-size:.7rem;color:var(--blue2);font-weight:600;letter-spacing:.1em;text-transform:uppercase}
+.htitle{font-family:'Sora',sans-serif;font-size:clamp(2.5rem,4.3vw,4.4rem);font-weight:800;line-height:1.06;color:#fff;margin-bottom:1.35rem}
+.htitle .gt{background:linear-gradient(135deg,var(--blue2),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hdesc{font-size:1rem;color:var(--grey);line-height:1.8;margin-bottom:2.2rem;max-width:440px}
+.hact{display:flex;gap:.88rem;flex-wrap:wrap;margin-bottom:2.7rem}
+.htr{display:flex;align-items:center;gap:1.35rem;flex-wrap:wrap}
+.tri{display:flex;flex-direction:column}
+.trn{font-family:'Sora',sans-serif;font-size:1.5rem;font-weight:800;color:#fff;line-height:1}
+.trl{font-size:.68rem;color:var(--grey);font-weight:500;margin-top:2px}
+.trdiv{width:1px;height:32px;background:var(--border)}
+
+/* ─── HERO VISUAL: SERVICE CARDS GRID ─── */
+.hvisual{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:.85rem;padding:.5rem}
+.horb{position:absolute;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(27,111,255,.15),transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;animation:orbP 4s ease-in-out infinite;z-index:0}
+@keyframes orbP{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.12)}}
+
+.svc-tile{position:relative;border-radius:20px;overflow:hidden;border:1px solid var(--border);box-shadow:0 8px 30px rgba(0,0,30,.45);transition:var(--t);cursor:default;z-index:1;animation:tileFloat var(--fd,6s) ease-in-out infinite;animation-delay:var(--fdelay,0s)}
+@keyframes tileFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.svc-tile:hover{transform:translateY(-6px) scale(1.03);border-color:rgba(27,111,255,.5);box-shadow:0 20px 50px rgba(0,0,40,.6)}
+.svc-tile img{width:100%;height:130px;object-fit:cover;display:block;filter:brightness(.72) saturate(.75);transition:filter .4s}
+.svc-tile:hover img{filter:brightness(.9) saturate(1)}
+.svc-tile-label{position:absolute;bottom:0;left:0;right:0;padding:.65rem .85rem;background:linear-gradient(to top,rgba(8,18,43,.95),rgba(8,18,43,.5) 70%,transparent);display:flex;align-items:center;gap:.5rem}
+.svc-tile-ico{font-size:1rem}
+.svc-tile-name{font-family:'Sora',sans-serif;font-size:.72rem;font-weight:700;color:#fff;letter-spacing:.04em}
+/* Large tile spanning 2 cols */
+.svc-tile.wide{grid-column:1/-1}
+.svc-tile.wide img{height:110px}
+.svc-tile.tall img{height:190px}
+
+/* ─── MARQUEE ─── */
+.mstrip{background:rgba(27,111,255,.07);border-top:1px solid var(--border2);border-bottom:1px solid var(--border2);padding:.9rem 0;overflow:hidden;position:relative;z-index:2}
+.mtrack{display:flex;gap:2.75rem;animation:mq 22s linear infinite;white-space:nowrap}
+.mtrack:hover{animation-play-state:paused}
+@keyframes mq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.mi{display:flex;align-items:center;gap:.55rem;font-size:.73rem;font-weight:600;color:var(--grey);letter-spacing:.1em;text-transform:uppercase;flex-shrink:0}
+.mdot{width:5px;height:5px;border-radius:50%;background:var(--blue)}
+
+/* ─── SECTIONS ─── */
+.sec{padding:6.5rem 6vw;max-width:1380px;margin:0 auto;position:relative;z-index:2}
+.seye{display:inline-flex;align-items:center;gap:.55rem;font-size:.68rem;font-weight:700;color:var(--blue2);letter-spacing:.18em;text-transform:uppercase;margin-bottom:1rem}
+.seye::before{content:'';width:18px;height:2px;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:2px}
+.stitle{font-family:'Sora',sans-serif;font-size:clamp(1.85rem,3vw,2.9rem);font-weight:800;color:#fff;line-height:1.15;margin-bottom:.9rem}
+.ssub{font-size:.97rem;color:var(--grey);line-height:1.75;max-width:500px}
+.sdiv{width:calc(100% - 12vw);height:1px;background:linear-gradient(90deg,transparent,var(--border) 20%,rgba(27,111,255,.2) 50%,var(--border) 80%,transparent);margin:0 6vw;position:relative;z-index:2}
+
+/* ─── SERVICES BENTO ─── */
+.sbento{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;margin-top:3.25rem}
+.scard{background:var(--glass);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;cursor:pointer;transition:var(--t);position:relative}
+.scard::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(27,111,255,.07),transparent);opacity:0;transition:opacity .4s;z-index:1;border-radius:inherit}
+.scard:hover{transform:translateY(-8px);border-color:rgba(27,111,255,.48);box-shadow:0 24px 60px rgba(0,0,40,.55)}
+.scard:hover::before{opacity:1}
+.simg{width:100%;height:185px;object-fit:cover;display:block;filter:saturate(.7) brightness(.78);transition:filter .4s,transform .6s}
+.scard:hover .simg{filter:saturate(1) brightness(.93);transform:scale(1.05)}
+.sbody{padding:1.4rem;position:relative;z-index:2}
+.sicob{width:36px;height:36px;background:linear-gradient(135deg,var(--blue),var(--cyan));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;margin-bottom:.85rem;box-shadow:var(--shadow-blue)}
+.sarr{position:absolute;top:1.4rem;right:1.4rem;width:28px;height:28px;border-radius:50%;background:var(--glass2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.72rem;color:var(--grey);transition:var(--t);z-index:3}
+.scard:hover .sarr{background:var(--blue);color:#fff;transform:rotate(45deg);border-color:var(--blue)}
+.scard h3{font-family:'Sora',sans-serif;font-size:.97rem;font-weight:700;color:#fff;margin-bottom:.45rem}
+.scard p{font-size:.81rem;color:var(--grey);line-height:1.65}
+
+/* ─── PROCESS ─── */
+.psec{padding:6.5rem 6vw;position:relative;z-index:2}
+.pin{max-width:1380px;margin:0 auto}
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;margin-top:3.25rem;position:relative}
+.pgrid::before{content:'';position:absolute;top:48px;left:calc(16.66% + 1rem);right:calc(16.66% + 1rem);height:1px;background:linear-gradient(90deg,transparent,var(--blue2),var(--cyan),var(--blue2),transparent);opacity:.32;pointer-events:none}
+.pcard{background:var(--glass);border:1px solid var(--border);border-radius:var(--rl);padding:2.1rem 1.8rem;text-align:center;transition:var(--t);position:relative;overflow:hidden}
+.pcard::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--blue),var(--cyan));transform:scaleX(0);transform-origin:left;transition:transform .4s}
+.pcard:hover{background:rgba(27,111,255,.07);border-color:rgba(27,111,255,.35);transform:translateY(-6px)}
+.pcard:hover::after{transform:scaleX(1)}
+.pnum{font-family:'Sora',sans-serif;font-size:2.8rem;font-weight:800;color:rgba(27,111,255,.14);line-height:1;margin-bottom:.85rem}
+.pico{width:48px;height:48px;background:linear-gradient(135deg,rgba(27,111,255,.18),rgba(0,194,255,.08));border:1px solid rgba(27,111,255,.28);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin:0 auto 1rem}
+.pcard h3{font-family:'Sora',sans-serif;font-size:1rem;font-weight:700;color:#fff;margin-bottom:.55rem}
+.pcard p{font-size:.83rem;color:var(--grey);line-height:1.65}
+
+/* ─── ALL SERVICES PAGE ─── */
+.spg{padding:110px 6vw 3rem;max-width:1380px;margin:0 auto;position:relative;z-index:2}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:1.2rem;margin-top:2.75rem}
+.svcard{background:var(--glass);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;transition:var(--t);position:relative}
+.svcard::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--cyan));transform:scaleX(0);transform-origin:left;transition:transform .4s}
+.svcard:hover{transform:translateY(-7px);border-color:rgba(27,111,255,.42);box-shadow:0 20px 60px rgba(0,0,40,.55)}
+.svcard:hover::after{transform:scaleX(1)}
+.svimg{width:100%;height:195px;object-fit:cover;filter:brightness(.72) saturate(.7);transition:filter .4s,transform .6s;display:block}
+.svcard:hover .svimg{filter:brightness(.9) saturate(1);transform:scale(1.05)}
+.svbody{padding:1.45rem}
+.svhead{display:flex;align-items:center;gap:.7rem;margin-bottom:.85rem}
+.svico{width:38px;height:38px;background:linear-gradient(135deg,var(--blue),var(--cyan));border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.05rem;flex-shrink:0;box-shadow:0 4px 14px rgba(27,111,255,.32)}
+.svcard h3{font-family:'Sora',sans-serif;font-size:.95rem;font-weight:700;color:#fff}
+.svcard p{font-size:.81rem;color:var(--grey);line-height:1.68}
+
+/* ─── ABOUT ─── */
+.ahero{padding:110px 6vw 4rem;max-width:1380px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:4.5rem;align-items:center;position:relative;z-index:2}
+.prow{display:grid;grid-template-columns:repeat(3,1fr);gap:.9rem;margin-top:2.25rem}
+.pil{background:var(--glass);border:1px solid var(--border);border-radius:var(--r);padding:1.15rem;transition:var(--t)}
+.pil:hover{border-color:var(--border2);background:rgba(27,111,255,.07);transform:translateY(-3px)}
+.pico2{font-size:1.25rem;margin-bottom:.45rem}
+.plbl{font-family:'Sora',sans-serif;font-size:.66rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--blue2);margin-bottom:.35rem}
+.pil p{font-size:.79rem;color:var(--grey);line-height:1.55}
+.aimgs{position:relative;height:500px}
+.ai1{position:absolute;width:300px;height:380px;object-fit:cover;border-radius:22px;top:0;left:0;border:1px solid var(--border);box-shadow:var(--shadow);z-index:2;filter:brightness(.82) saturate(.8)}
+.ai2{position:absolute;width:250px;height:300px;object-fit:cover;border-radius:22px;bottom:0;right:0;border:1px solid var(--border);box-shadow:var(--shadow);z-index:3;filter:brightness(.82) saturate(.8)}
+.agl{position:absolute;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(27,111,255,.28),transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);z-index:1;pointer-events:none}
+.vgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;margin-top:2.75rem}
+.vcard{background:var(--glass);border:1px solid var(--border);border-radius:var(--rl);padding:1.85rem;transition:var(--t)}
+.vcard:hover{border-color:var(--border2);transform:translateY(-4px)}
+.vcard h3{font-family:'Sora',sans-serif;font-size:.97rem;font-weight:700;color:#fff;margin-bottom:.85rem}
+.vcard p,.vcard li{font-size:.87rem;color:var(--grey);line-height:1.7}
+.vcard ul{list-style:none}
+.vcard li{padding:.28rem 0;border-bottom:1px solid var(--border)}
+.vcard li:last-child{border-bottom:none}
+.vcard li::before{content:'→ ';color:var(--blue2);font-size:.73rem}
+
+/* ─── CONTACT ─── */
+.chero{padding:110px 6vw 2.5rem;max-width:860px;margin:0 auto;text-align:center;position:relative;z-index:2}
+.cfw{max-width:780px;margin:0 auto;padding:0 6vw 2.5rem;position:relative;z-index:2}
+.cform{background:rgba(15,32,85,.4);border:1px solid var(--border);border-radius:var(--rl);padding:2.4rem;backdrop-filter:blur(20px);box-shadow:0 20px 80px rgba(0,0,40,.45)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:1.15rem;margin-bottom:1.15rem}
+.fg{display:flex;flex-direction:column;gap:.45rem;margin-bottom:1.15rem}
+.fg label{font-size:.8rem;font-weight:600;color:rgba(255,255,255,.82)}
+.fg input,.fg select,.fg textarea{width:100%;padding:.82rem 1.05rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:11px;font-family:'DM Sans',sans-serif;font-size:.88rem;color:#fff;outline:none;transition:all .25s;appearance:none;-webkit-appearance:none}
+.fg input::placeholder,.fg textarea::placeholder{color:var(--grey)}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--blue);background:rgba(27,111,255,.08);box-shadow:0 0 0 3px rgba(27,111,255,.14)}
+.fg select option{background:#0F2055;color:#fff}
+.fg textarea{resize:vertical;min-height:135px}
+.ffooter{display:flex;justify-content:space-between;align-items:center;margin-top:1.2rem}
+.fnote{font-size:.77rem;color:var(--grey)}
+.cicards{max-width:780px;margin:0 auto 3.5rem;padding:0 6vw;display:grid;grid-template-columns:repeat(3,1fr);gap:.95rem;position:relative;z-index:2}
+.cicard{background:var(--glass);border:1px solid var(--border);border-radius:var(--r);padding:1.4rem;text-align:center;transition:var(--t)}
+.cicard:hover{border-color:var(--border2);transform:translateY(-4px)}
+.cicard .ico{font-size:1.55rem;margin-bottom:.55rem;display:block}
+.cicard strong{display:block;font-size:.76rem;color:#fff;font-weight:600;margin-bottom:.28rem}
+.cicard span{font-size:.76rem;color:var(--grey);line-height:1.5}
+
+/* ─── SUBMIT STATES ─── */
+.sending{opacity:.7}
+.success-btn{background:linear-gradient(135deg,#059669,#10b981) !important}
+
+/* ─── FOOTER ─── */
+.fw{position:relative;z-index:2;padding:0 6vw 2rem}
+.fi{background:rgba(15,32,85,.45);border:1px solid var(--border);border-radius:var(--rl);padding:2.75rem;backdrop-filter:blur(20px);display:grid;grid-template-columns:2fr 1fr 1.4fr;gap:2.75rem}
+.fbrand p{font-size:.87rem;color:var(--grey);line-height:1.75;margin:1rem 0 1.2rem;max-width:270px}
+.fchips{display:flex;gap:.45rem;flex-wrap:wrap}
+.fchip{font-size:.62rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--grey);padding:.28rem .7rem;border:1px solid var(--border);border-radius:50px}
+.fcol h4{font-family:'Sora',sans-serif;font-size:.78rem;font-weight:700;color:#fff;letter-spacing:.08em;text-transform:uppercase;margin-bottom:1.1rem}
+.fcol ul{list-style:none;display:flex;flex-direction:column;gap:.55rem}
+.fcol ul a{font-size:.87rem;color:var(--grey);text-decoration:none;cursor:pointer;transition:color .2s}
+.fcol ul a:hover{color:var(--blue2)}
+.fci{display:flex;align-items:flex-start;gap:.6rem;font-size:.87rem;color:var(--grey);margin-bottom:.65rem}
+.fci .ico{color:var(--blue2);font-size:.88rem;margin-top:1px;flex-shrink:0}
+.fbot{display:flex;justify-content:space-between;align-items:center;padding:1.25rem 2.75rem 0;border-top:1px solid var(--border);margin-top:1.75rem}
+.fbot p{font-size:.76rem;color:var(--grey)}
+
+/* ─── REVEAL ─── */
+.rev{opacity:0;transform:translateY(36px);transition:opacity .68s cubic-bezier(.23,1,.32,1),transform .68s cubic-bezier(.23,1,.32,1)}
+.rev.on{opacity:1;transform:translateY(0)}
+.rev.d1{transition-delay:.1s}.rev.d2{transition-delay:.2s}.rev.d3{transition-delay:.3s}.rev.d4{transition-delay:.4s}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:1024px){.hero{grid-template-columns:1fr;padding:95px 5vw 3.5rem}.hvisual{grid-template-columns:1fr 1fr}.sbento{grid-template-columns:repeat(2,1fr)}.pgrid,.prow,.vgrid{grid-template-columns:repeat(2,1fr)}.pgrid::before{display:none}.fi{grid-template-columns:1fr 1fr}.ahero{grid-template-columns:1fr;padding-top:95px}.aimgs{height:300px}}
+@media(max-width:768px){nav{top:9px;width:calc(100% - 2rem)}.nav-links{display:none}.sbento,.pgrid,.vgrid,.frow,.cicards{grid-template-columns:1fr}.fi{grid-template-columns:1fr;gap:1.75rem}.sec{padding:4rem 5vw}.psec{padding:4rem 5vw}.sdiv{margin:0 5vw;width:calc(100% - 10vw)}.ahero,.spg,.chero{padding:85px 5vw 2rem}.cfw,.cicards{padding:0 5vw 2rem}.fw{padding:0 5vw 1.5rem}.sgrid{grid-template-columns:1fr}.prow{grid-template-columns:1fr 1fr}.hvisual{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+
+<!-- ═══════════════ LOGO SVG DEFINITION (reused) ═══════════════ -->
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="hl-logo" viewBox="0 0 40 40">
+    <defs>
+      <linearGradient id="lg1" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#1B6FFF"/>
+        <stop offset="100%" stop-color="#00C2FF"/>
+      </linearGradient>
+    </defs>
+    <!-- Hexagon shield -->
+    <path d="M20 2L36 11V29L20 38L4 29V11Z" fill="url(#lg1)" opacity=".18"/>
+    <path d="M20 2L36 11V29L20 38L4 29V11Z" fill="none" stroke="url(#lg1)" stroke-width="1.5"/>
+    <!-- Water drop -->
+    <path d="M20 8C16.5 8 12 15 12 20a8 8 0 0016 0c0-5-3.5-12-8-12z" fill="url(#lg1)"/>
+    <!-- Wifi waves (infra lines) -->
+    <path d="M14 30 Q20 26 26 30" fill="none" stroke="#00C2FF" stroke-width="1.5" stroke-linecap="round" opacity=".7"/>
+    <path d="M16 33 Q20 30.5 24 33" fill="none" stroke="#00C2FF" stroke-width="1.5" stroke-linecap="round" opacity=".5"/>
+  </symbol>
+</svg>
+
+<!-- ═══════════════ NAV ═══════════════ -->
+<nav id="nav">
+  <div class="logo-wrap" onclick="showPage('home')">
+    <div class="logo-mark">
+      <svg width="36" height="36" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="nlg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1B6FFF"/><stop offset="100%" stop-color="#00C2FF"/></linearGradient></defs>
+        <path d="M20 2L36 11V29L20 38L4 29V11Z" fill="url(#nlg)" opacity=".18"/>
+        <path d="M20 2L36 11V29L20 38L4 29V11Z" fill="none" stroke="url(#nlg)" stroke-width="1.5"/>
+        <path d="M20 8C16.5 8 12 15 12 20a8 8 0 0016 0c0-5-3.5-12-8-12z" fill="url(#nlg)"/>
+        <path d="M14 30 Q20 26 26 30" fill="none" stroke="#00C2FF" stroke-width="1.5" stroke-linecap="round" opacity=".8"/>
+        <path d="M16 33 Q20 30.5 24 33" fill="none" stroke="#00C2FF" stroke-width="1.5" stroke-linecap="round" opacity=".5"/>
+      </svg>
+    </div>
+    <div class="logo-text"><b>HYDROLINK</b><small>Infrasolutions</small></div>
+  </div>
+  <ul class="nav-links">
+    <li><a onclick="showPage('home')" id="nh" class="active">Home</a></li>
+    <li><a onclick="showPage('about')" id="na">About</a></li>
+    <li><a onclick="showPage('services')" id="ns">Services</a></li>
+    <li><a onclick="showPage('contact')" id="nc">Contact</a></li>
+  </ul>
+  <button class="nbtn" onclick="showPage('contact')">Get a Free Consultation</button>
+</nav>
+
+<!-- ═══════════════ HOME ═══════════════ -->
+<div id="home" class="page active">
+  <div class="hero">
+    <!-- LEFT -->
+    <div>
+      <div class="hbadge rev"><span class="hbdot"></span><span>Trusted Infrastructure Partner</span></div>
+      <h1 class="htitle rev d1">Pure Water,<br/><span class="gt">Sustainable</span><br/>Future.</h1>
+      <p class="hdesc rev d2">Comprehensive water infrastructure, advanced filtration, and smart security solutions for industrial, municipal, and residential needs.</p>
+      <div class="hact rev d3">
+        <button class="btn-p" onclick="showPage('contact')">Get a Free Consultation</button>
+        <button class="btn-g" onclick="showPage('services')">Explore Our Expertise →</button>
+      </div>
+      <div class="htr rev d4">
+        <div class="tri"><span class="trn" data-target="500" data-suf="+">500+</span><span class="trl">Projects Done</span></div>
+        <div class="trdiv"></div>
+        <div class="tri"><span class="trn" data-target="10" data-suf="+">10+</span><span class="trl">Years Experience</span></div>
+        <div class="trdiv"></div>
+        <div class="tri"><span class="trn" data-target="99" data-suf="%">99%</span><span class="trl">Satisfaction Rate</span></div>
+        <div class="trdiv"></div>
+        <div class="tri"><span class="trn">24/7</span><span class="trl">Support</span></div>
+      </div>
+    </div>
+    <!-- RIGHT: Service tiles grid -->
+    <div class="hvisual rev d2">
+      <div class="horb"></div>
+      <!-- Tile 1: RO System -->
+      <div class="svc-tile tall" style="--fd:7s;--fdelay:0s">
+        <img src="ro pants.png" alt="RO" onerror="this.style.background='rgba(27,111,255,.2)';this.style.height='190px';this.removeAttribute('src')"/>
+        <div class="svc-tile-label"><span class="svc-tile-ico">💧</span><span class="svc-tile-name">Reverse Osmosis</span></div>
+      </div>
+      <!-- Tile 2: CCTV -->
+      <div class="svc-tile tall" style="--fd:8s;--fdelay:0.5s">
+        <img src="cctv.png" alt="CCTV" onerror="this.style.background='rgba(27,111,255,.2)';this.style.height='190px';this.removeAttribute('src')"/>
+        <div class="svc-tile-label"><span class="svc-tile-ico">📷</span><span class="svc-tile-name">CCTV Surveillance</span></div>
+      </div>
+      <!-- Tile 3: Boom Barrier -->
+      <div class="svc-tile" style="--fd:6.5s;--fdelay:0.25s">
+        <img src="Boom-barrier-.jpg" alt="Barrier" onerror="this.style.background='rgba(27,111,255,.2)';this.style.height='130px';this.removeAttribute('src')"/>
+        <div class="svc-tile-label"><span class="svc-tile-ico">🚧</span><span class="svc-tile-name">Boom Barrier</span></div>
+      </div>
+      <!-- Tile 4: Water Softener -->
+      <div class="svc-tile" style="--fd:7.5s;--fdelay:0.75s">
+        <img src="softner.jpg" alt="Softener" onerror="this.style.background='rgba(27,111,255,.2)';this.style.height='130px';this.removeAttribute('src')"/>
+        <div class="svc-tile-label"><span class="svc-tile-ico">🫧</span><span class="svc-tile-name">Water Softener</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MARQUEE -->
+  <div class="mstrip">
+    <div class="mtrack">
+      <span class="mi"><span class="mdot"></span>RO Systems</span><span class="mi"><span class="mdot"></span>CCTV Surveillance</span><span class="mi"><span class="mdot"></span>Boom Barriers</span><span class="mi"><span class="mdot"></span>Water Softeners</span><span class="mi"><span class="mdot"></span>STP Plants</span><span class="mi"><span class="mdot"></span>Networking</span><span class="mi"><span class="mdot"></span>Air Purifiers</span><span class="mi"><span class="mdot"></span>Video Door Phones</span><span class="mi"><span class="mdot"></span>Under-Sink RO</span><span class="mi"><span class="mdot"></span>RO Plants</span>
+      <span class="mi"><span class="mdot"></span>RO Systems</span><span class="mi"><span class="mdot"></span>CCTV Surveillance</span><span class="mi"><span class="mdot"></span>Boom Barriers</span><span class="mi"><span class="mdot"></span>Water Softeners</span><span class="mi"><span class="mdot"></span>STP Plants</span><span class="mi"><span class="mdot"></span>Networking</span><span class="mi"><span class="mdot"></span>Air Purifiers</span><span class="mi"><span class="mdot"></span>Video Door Phones</span><span class="mi"><span class="mdot"></span>Under-Sink RO</span><span class="mi"><span class="mdot"></span>RO Plants</span>
+    </div>
+  </div>
+
+  <!-- CORE SERVICES PREVIEW -->
+  <div class="sec">
+    <div class="rev"><p class="seye">Core Services</p><h2 class="stitle">Everything you need,<br/>under one roof</h2><p class="ssub">We design, install, and maintain water purification and security systems with full lifecycle support.</p></div>
+    <div class="sbento">
+      <!-- Card 1: RO Systems — guy fixing RO under sink -->
+      <div class="scard rev d1">
+        <div style="overflow:hidden"><img class="simg" src="/reverse osmosis.png" alt="RO install" onerror="this.style.height='185px';this.style.background='rgba(27,111,255,.12)';this.removeAttribute('src')"/></div>
+        <div class="sbody"><div class="sicob">💧</div><div class="sarr" onclick="showPage('services')">↗</div><h3>Reverse Osmosis Systems</h3><p>High-efficiency RO purification for residential and industrial needs. 99.9% contaminant removal.</p></div>
+      </div>
+      <!-- Card 2: CCTV — surveillance camera outdoor -->
+      <div class="scard rev d2">
+        <div style="overflow:hidden"><img class="simg" src="/cctv.png" alt="CCTV camera" onerror="this.style.height='185px';this.style.background='rgba(27,111,255,.12)';this.removeAttribute('src')"/></div>
+        <div class="sbody"><div class="sicob">📷</div><div class="sarr" onclick="showPage('services')">↗</div><h3>CCTV Surveillance</h3><p>Advanced surveillance systems with professional setup, configuration, and after-sales support.</p></div>
+      </div>
+      <!-- Card 3: STP / RO Plant — industrial water treatment -->
+      <div class="scard rev d3">
+        <div style="overflow:hidden"><img class="simg" src="/stp.jpg" alt="STP RO Plant" onerror="this.style.height='185px';this.style.background='rgba(27,111,255,.12)';this.removeAttribute('src')"/></div>
+        <div class="sbody"><div class="sicob">🏭</div><div class="sarr" onclick="showPage('services')">↗</div><h3>STP &amp; RO Plants</h3><p>Complete installation, commissioning and servicing of commercial sewage treatment and RO plants.</p></div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:2.25rem"><button class="btn-g rev" onclick="showPage('services')">View All 10 Services →</button></div>
+  </div>
+
+  <div class="sdiv rev"></div>
+
+  <!-- PROCESS -->
+  <div class="psec">
+    <div class="pin">
+      <div class="rev"><p class="seye">Our Process</p><h2 class="stitle">Clear path from assessment<br/>to commissioning</h2><p class="ssub">Predictable delivery: validate requirements early, engineer for performance, support long after handover.</p></div>
+      <div class="pgrid">
+        <div class="pcard rev d1"><div class="pnum">01</div><div class="pico">🔍</div><h3>Assessment & Design</h3><p>Water analysis, site evaluation, and a custom design that meets your flow and quality targets.</p></div>
+        <div class="pcard rev d2"><div class="pnum">02</div><div class="pico">🔧</div><h3>Build & Install</h3><p>Fabrication, on-site installation, commissioning, and operator readiness — all by our team.</p></div>
+        <div class="pcard rev d3"><div class="pnum">03</div><div class="pico">🛡️</div><h3>Maintain & Improve</h3><p>Preventive maintenance, performance optimization, and long-term support for peak health.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="fw">
+    <div class="fi">
+      <div class="fbrand">
+        <div class="logo-wrap" onclick="showPage('home')" style="margin-bottom:.75rem">
+          <div class="logo-mark"><svg width="36" height="36" viewBox="0 0 40 40"><defs><linearGradient id="flg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1B6FFF"/><stop offset="100%" stop-color="#00C2FF"/></linearGradient></defs><path d="M20 2L36 11V29L20 38L4 29V11Z" fill="url(#flg)" opacity=".18"/><path d="M20 2L36 11V29L20 38L4 29V11Z" fill="none" stroke="url(#flg)" stroke-width="1.5"/><path d="M20 8C16.5 8 12 15 12 20a8 8 0 0016 0c0-5-3.5-12-8-12z" fill="url(#flg)"/><path d="M14 30 Q20 26 26 30" fill="none" stroke="#00C2FF" stroke-width="1.5" stroke-linecap="round" opacity=".8"/><path d="M16 33 Q20 30.5 24 33" fill="none" stroke="#00C2FF" stroke-width="1.5" stroke-linecap="round" opacity=".5"/></svg></div>
+          <div class="logo-text"><b>HYDROLINK</b><small>Infrasolutions</small></div>
+        </div>
+        <p>Pure Water, Sustainable Future. Advanced treatment and security systems that make life reliable for every community and home.</p>
+        <div class="fchips"><span class="fchip">Engineering</span><span class="fchip">Filtration</span><span class="fchip">Security</span><span class="fchip">Infrastructure</span></div>
+      </div>
+      <div class="fcol"><h4>Explore</h4><ul><li><a onclick="showPage('home')">Home</a></li><li><a onclick="showPage('about')">About</a></li><li><a onclick="showPage('services')">Services</a></li><li><a onclick="showPage('contact')">Contact</a></li></ul></div>
+      <div class="fcol"><h4>Contact</h4>
+        <div class="fci"><span class="ico">✉</span><span>hydrolink.infrasolutions@gmail.com</span></div>
+        <div class="fci"><span class="ico">📞</span><span>8451027267 — Yash Tiwari</span></div>
+        <div class="fci"><span class="ico">📍</span><span>Malad West, near Krishna Hotel, Opp. LM Patel Hospital</span></div>
+        <button class="btn-p" onclick="showPage('contact')" style="margin-top:1.1rem;font-size:.8rem;padding:.65rem 1.4rem">Request a Proposal</button>
+      </div>
+    </div>
+    <div class="fbot"><p>© 2026 Hydrolink Infrasolutions. All rights reserved.</p><p>Built for clean water futures.</p></div>
+  </div>
+</div><!-- END HOME -->
+
+<!-- ═══════════════ SERVICES ═══════════════ -->
+<div id="services" class="page">
+  <div class="spg">
+    <div class="rev"><p class="seye">All Services</p><h1 class="stitle">Everything we offer,<br/>under one roof</h1><p class="ssub">Complete supply, professional installation, and ongoing servicing — 10 specialised solutions.</p></div>
+    <div class="sgrid">
+      <!-- 1 Air Purifier: person cleaning/servicing an air purifier unit -->
+      <div class="svcard rev d1">
+        <img class="svimg" src="air-purifier.jpg" alt="Air Purifier service" onerror="this.style.height='195px';this.style.background='rgba(27,111,255,.12)';this.removeAttribute('src')"/>
+        <div class="svbody"><div class="svhead"><div class="svico">🌬️</div><h3>Air Purifier</h3></div><p>Complete supply, professional installation, and regular servicing. Removes dust, allergens, and pollutants for homes, offices, and commercial spaces.</p></div>
+      </div>
+      <!-- 2 Boom Barrier: boom gate at parking -->
+      <div class="svcard rev d2">
+        <img class="svimg" src="Boom-barrier-.jpg" alt="Boom barrier gate" onerror="this.style.height='195px';this.style.background='rgba(27,111,255,.12)';this.removeAttribute('src')"/>
+        <div class="svbody"><div class="svhead"><div class="svico">🚧</div><h3>Boom Barrier</h3></div><p>End-to-end installation of automatic boom barrier systems for residential societies, commercial buildings, parking areas, and industrial premises.</p></div>
+      </div>
+      <!-- 3 CCTV: outdoor CCTV camera on wall -->
+      <div class="svcard rev d3">
+        <img class="svimg" src="cctv.png" alt="CCTV camera" onerror="this.style.height='195px';this.style.background='rgba(27,111,255,.12)';this.removeAttribute('src')"/>
+        <div class="svbody"><div class="svhead"><div class="svico">📷</div><h3>CCTV Surveillance</h3></div><p>Advanced surveillance systems with camera setup, system configuration, maintenance, and after-sales support for residential and commercial properties.</p></div>
+      </div>
+      <!-- 4 Networking: technician with ethernet cables server rack -->
+      <div class="svcard rev d1">
+        <img class="svimg" src="networking.png" alt="Network rack" onerror="this.style.height='195px';this.style.background='rgba(27,111,255,.12)';this.removeAttribute('src')"/>
+        <div class="svbody"><div class="svhead"><div class="svico">🌐</div><h3>Networking Solutions</h3></div><p>Structured cabling, LAN setup, and network optimization. Ongoing servicing and maintenance for reliable, secure connectivity.</p></div>
+      </div>
+      <!-- 5 RO: technician installing RO under sink -->
+      <div class="svcard rev d2">
+        <img class="svimg" src="undersink.jpg" alt="RO installation" onerror="this.style.height='195px';this.style.background='rgba(27,111,255,.12)';this.removeAttribute('src')"/>
+        <div class="svbody"><div class="svhead"><div class="svico">💧</div><h3>Reverse Osmosis (RO)</h3></div><p>High-quality reverse osmosis purification systems delivering safe, clean, healthy drinking water by removing impurities and contaminants.</p></div>
+      </div>
+      <!-- 6 RO Plant: large industrial RO plant -->
+      <div class="svcard rev d3">
+        <img class="svimg" src="ro pants.png" alt="RO plant industrial" onerror="this.style.height='195px';this.style.background='rgba(27,111,255,.12)';this.removeAttribute('src')"/>
+        <div class="svbody"><div class="svhead"><div class="svico">🏭</div><h3>RO Plants</h3></div><p>Complete installation, commissioning, and servicing of commercial and industrial RO plants tailored to high-capacity purification requirements.</p></div>
+      </div>
+      <!-- 7 Water Softener: softener tanks -->
+      <div class="svcard rev d1">
+        <img class="svimg" src="softner.jpg" alt="Water softener" onerror="this.style.height='195px';this.style.background='rgba(27,111,255,.12)';this.removeAttribute('src')"/>
+        <div class="svbody"><div class="svhead"><div class="svico">🫧</div><h3>Water Softener</h3></div><p>Installation and servicing of water softener systems that reduce hardness, prevent scaling, and protect plumbing and appliances.</p></div>
+      </div>
+      <!-- 8 STP: sewage/water treatment plant facility -->
+      <div class="svcard rev d2">
+        <img class="svimg" src="stp.jpg" alt="STP wastewater" onerror="this.style.height='195px';this.style.background='rgba(27,111,255,.12)';this.removeAttribute('src')"/>
+        <div class="svbody"><div class="svhead"><div class="svico">♻️</div><h3>STP (Sewage Treatment)</h3></div><p>Complete sewage treatment plant solutions: installation, operational support, and regular servicing for effective wastewater management.</p></div>
+      </div>
+      <!-- 9 Under-sink RO: compact under-sink unit -->
+      <div class="svcard rev d3">
+        <img class="svimg" src="undersink.jpg" alt="Under-sink RO" onerror="this.style.height='195px';this.style.background='rgba(27,111,255,.12)';this.removeAttribute('src')"/>
+        <div class="svbody"><div class="svhead"><div class="svico">🔩</div><h3>Under-Sink Model RO</h3></div><p>Compact under-sink RO purifiers for modern kitchens. Space-saving, efficient purification with reliable servicing included.</p></div>
+      </div>
+      <!-- 10 VDP: video door phone installed on wall -->
+      <div class="svcard rev d1">
+        <img class="svimg" src="vdp.jpg" alt="Video door phone" onerror="this.style.height='195px';this.style.background='rgba(27,111,255,.12)';this.removeAttribute('src')"/>
+        <div class="svbody"><div class="svhead"><div class="svico">🔔</div><h3>VDP (Video Door Phone)</h3></div><p>Install and maintain video door phone systems for real-time visitor verification at homes, apartments, and office buildings.</p></div>
+      </div>
+    </div>
+  </div>
+  <!-- Footer -->
+  <div class="fw" style="margin-top:3.5rem">
+    <div class="fi">
+      <div class="fbrand"><div class="logo-wrap" style="margin-bottom:.75rem"><div class="logo-mark"><svg width="36" height="36" viewBox="0 0 40 40"><defs><linearGradient id="flg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1B6FFF"/><stop offset="100%" stop-color="#00C2FF"/></linearGradient></defs><path d="M20 2L36 11V29L20 38L4 29V11Z" fill="url(#flg2)" opacity=".18"/><path d="M20 2L36 11V29L20 38L4 29V11Z" fill="none" stroke="url(#flg2)" stroke-width="1.5"/><path d="M20 8C16.5 8 12 15 12 20a8 8 0 0016 0c0-5-3.5-12-8-12z" fill="url(#flg2)"/><path d="M14 30 Q20 26 26 30" fill="none" stroke="#00C2FF" stroke-width="1.5" stroke-linecap="round" opacity=".8"/><path d="M16 33 Q20 30.5 24 33" fill="none" stroke="#00C2FF" stroke-width="1.5" stroke-linecap="round" opacity=".5"/></svg></div><div class="logo-text"><b>HYDROLINK</b><small>Infrasolutions</small></div></div><p>Pure Water, Sustainable Future.</p><div class="fchips"><span class="fchip">Engineering</span><span class="fchip">Filtration</span><span class="fchip">Security</span></div></div>
+      <div class="fcol"><h4>Explore</h4><ul><li><a onclick="showPage('home')">Home</a></li><li><a onclick="showPage('about')">About</a></li><li><a onclick="showPage('services')">Services</a></li><li><a onclick="showPage('contact')">Contact</a></li></ul></div>
+      <div class="fcol"><h4>Contact</h4><div class="fci"><span class="ico">✉</span><span>hydrolink.infrasolutions@gmail.com</span></div><div class="fci"><span class="ico">📞</span><span>8451027267 — Yash Tiwari</span></div><div class="fci"><span class="ico">📍</span><span>Malad West, near Krishna Hotel, Opp. LM Patel Hospital</span></div><button class="btn-p" onclick="showPage('contact')" style="margin-top:1.1rem;font-size:.8rem;padding:.65rem 1.4rem">Request a Proposal</button></div>
+    </div>
+    <div class="fbot"><p>© 2026 Hydrolink Infrasolutions. All rights reserved.</p><p>Built for clean water futures.</p></div>
+  </div>
+</div><!-- END SERVICES -->
+
+<!-- ═══════════════ ABOUT ═══════════════ -->
+<div id="about" class="page">
+  <div class="ahero">
+    <div>
+      <p class="seye rev">About Us</p>
+      <h1 class="stitle rev d1">About Hydrolink</h1>
+      <p class="rev d2" style="color:var(--grey);font-size:.98rem;line-height:1.8;margin-bottom:.9rem">Hydrolink Infrasolutions is dedicated to solving the world's most complex water and infrastructure challenges. With years of expertise in water engineering, security, and networking, our mission is to provide innovative, reliable, and sustainable solutions.</p>
+      <p class="rev d2" style="color:var(--grey);font-size:.98rem;line-height:1.8;margin-bottom:2rem">We believe pure water and secure infrastructure improve lives. Quality, integrity, and customer satisfaction drive everything we do.</p>
+      <div class="prow rev d3">
+        <div class="pil"><div class="pico2">⚙️</div><div class="plbl">Engineering</div><p>Right-sized systems built for performance and compliance.</p></div>
+        <div class="pil"><div class="pico2">🌿</div><div class="plbl">Sustainability</div><p>Reuse-first solutions reducing waste and energy impact.</p></div>
+        <div class="pil"><div class="pico2">🛡️</div><div class="plbl">Support</div><p>Commissioning, training, and maintenance that lasts.</p></div>
+      </div>
+    </div>
+    <div class="aimgs rev d2">
+      <div class="agl"></div>
+      <img class="ai1" src="https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=700&q=80" alt="Water plant" onerror="this.style.background='rgba(27,111,255,.12)'"/>
+      <img class="ai2" src="https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=600&q=80" alt="RO install" onerror="this.style.background='rgba(27,111,255,.12)'"/>
+    </div>
+  </div>
+  <div class="sec" style="padding-top:2rem">
+    <div class="rev"><p class="seye">Vision & Mission</p><h2 class="stitle">Purpose-built for lasting impact</h2><p class="ssub">Engineering rigor meets sustainability — every project performs today and protects tomorrow.</p></div>
+    <div class="vgrid">
+      <div class="vcard rev d1"><h3>Vision</h3><p>Deliver safe, clean water and robust infrastructure through sustainable engineering solutions for every community we serve.</p></div>
+      <div class="vcard rev d2"><h3>Mission</h3><p>Design and implement high-quality systems that last — for every home, industry, and municipality.</p></div>
+      <div class="vcard rev d3"><h3>Core Values</h3><ul><li>Integrity in every project</li><li>Uncompromising quality</li><li>Sustainable by design</li><li>Innovation-led approach</li></ul></div>
+    </div>
+  </div>
+  <div class="fw" style="margin-top:2rem">
+    <div class="fi">
+      <div class="fbrand"><div class="logo-wrap" style="margin-bottom:.75rem"><div class="logo-mark"><svg width="36" height="36" viewBox="0 0 40 40"><defs><linearGradient id="flg3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1B6FFF"/><stop offset="100%" stop-color="#00C2FF"/></linearGradient></defs><path d="M20 2L36 11V29L20 38L4 29V11Z" fill="url(#flg3)" opacity=".18"/><path d="M20 2L36 11V29L20 38L4 29V11Z" fill="none" stroke="url(#flg3)" stroke-width="1.5"/><path d="M20 8C16.5 8 12 15 12 20a8 8 0 0016 0c0-5-3.5-12-8-12z" fill="url(#flg3)"/><path d="M14 30 Q20 26 26 30" fill="none" stroke="#00C2FF" stroke-width="1.5" stroke-linecap="round" opacity=".8"/><path d="M16 33 Q20 30.5 24 33" fill="none" stroke="#00C2FF" stroke-width="1.5" stroke-linecap="round" opacity=".5"/></svg></div><div class="logo-text"><b>HYDROLINK</b><small>Infrasolutions</small></div></div><p>Pure Water, Sustainable Future.</p><div class="fchips"><span class="fchip">Engineering</span><span class="fchip">Filtration</span><span class="fchip">Security</span></div></div>
+      <div class="fcol"><h4>Explore</h4><ul><li><a onclick="showPage('home')">Home</a></li><li><a onclick="showPage('about')">About</a></li><li><a onclick="showPage('services')">Services</a></li><li><a onclick="showPage('contact')">Contact</a></li></ul></div>
+      <div class="fcol"><h4>Contact</h4><div class="fci"><span class="ico">✉</span><span>hydrolink.infrasolutions@gmail.com</span></div><div class="fci"><span class="ico">📞</span><span>8451027267 — Yash Tiwari</span></div><div class="fci"><span class="ico">📍</span><span>Malad West, near Krishna Hotel, Opp. LM Patel Hospital</span></div><button class="btn-p" onclick="showPage('contact')" style="margin-top:1.1rem;font-size:.8rem;padding:.65rem 1.4rem">Request a Proposal</button></div>
+    </div>
+    <div class="fbot"><p>© 2026 Hydrolink Infrasolutions. All rights reserved.</p><p>Built for clean water futures.</p></div>
+  </div>
+</div><!-- END ABOUT -->
+
+<!-- ═══════════════ CONTACT ═══════════════ -->
+<div id="contact" class="page">
+  <div class="chero">
+    <p class="seye rev" style="justify-content:center">Get in Touch</p>
+    <h1 class="stitle rev d1">Start your Hydrolink project</h1>
+    <p class="rev d2" style="color:var(--grey);font-size:.97rem;line-height:1.75;max-width:460px;margin:0 auto">Share a few details and our specialists will prepare a proposal. We respond within 1–2 business days.</p>
+  </div>
+  <div class="cfw rev">
+    <!-- NOTE FOR DEPLOYMENT: Replace this form with a PHP form action 
+         pointing to send_mail.php (included as separate file).
+         For now the JS fallback sends via mailto: -->
+    <form class="cform" id="contactForm" onsubmit="handleSubmit(event)">
+      <div class="frow">
+        <div class="fg"><label>Full Name *</label><input type="text" name="name" placeholder="Yash Tiwari" required/></div>
+        <div class="fg"><label>Email Address *</label><input type="email" name="email" placeholder="you@example.com" required/></div>
+      </div>
+      <div class="fg">
+        <label>Project Type</label>
+        <select name="project">
+          <option value="">Select a service...</option>
+          <option>Air Purifier</option><option>Boom Barrier</option><option>CCTV Surveillance</option>
+          <option>Networking Solutions</option><option>Reverse Osmosis (RO)</option><option>RO Plants</option>
+          <option>Water Softener</option><option>STP (Sewage Treatment Plant)</option>
+          <option>Under-Sink Model RO</option><option>VDP (Video Door Phone)</option>
+        </select>
+      </div>
+      <div class="fg" style="margin-bottom:0">
+        <label>Project Details</label>
+        <textarea name="message" placeholder="Tell us about your requirements, timeline, location..."></textarea>
+      </div>
+      <div class="ffooter">
+        <p class="fnote">We respond within 1–2 business days.</p>
+        <button type="submit" class="btn-p" id="sbtn">Submit Request</button>
+      </div>
+    </form>
+  </div>
+  <div class="cicards rev">
+    <div class="cicard"><span class="ico">✉️</span><strong>Email</strong><span>hydrolink.infrasolutions@gmail.com</span></div>
+    <div class="cicard"><span class="ico">📞</span><strong>Phone</strong><span>8451027267<br/>Yash Tiwari</span></div>
+    <div class="cicard"><span class="ico">📍</span><strong>Location</strong><span>Malad West, near Krishna Hotel,<br/>Opp. LM Patel Hospital</span></div>
+  </div>
+  <div class="fw">
+    <div class="fi">
+      <div class="fbrand"><div class="logo-wrap" style="margin-bottom:.75rem"><div class="logo-mark"><svg width="36" height="36" viewBox="0 0 40 40"><defs><linearGradient id="flg4" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1B6FFF"/><stop offset="100%" stop-color="#00C2FF"/></linearGradient></defs><path d="M20 2L36 11V29L20 38L4 29V11Z" fill="url(#flg4)" opacity=".18"/><path d="M20 2L36 11V29L20 38L4 29V11Z" fill="none" stroke="url(#flg4)" stroke-width="1.5"/><path d="M20 8C16.5 8 12 15 12 20a8 8 0 0016 0c0-5-3.5-12-8-12z" fill="url(#flg4)"/><path d="M14 30 Q20 26 26 30" fill="none" stroke="#00C2FF" stroke-width="1.5" stroke-linecap="round" opacity=".8"/><path d="M16 33 Q20 30.5 24 33" fill="none" stroke="#00C2FF" stroke-width="1.5" stroke-linecap="round" opacity=".5"/></svg></div><div class="logo-text"><b>HYDROLINK</b><small>Infrasolutions</small></div></div><p>Pure Water, Sustainable Future.</p><div class="fchips"><span class="fchip">Engineering</span><span class="fchip">Filtration</span><span class="fchip">Security</span></div></div>
+      <div class="fcol"><h4>Explore</h4><ul><li><a onclick="showPage('home')">Home</a></li><li><a onclick="showPage('about')">About</a></li><li><a onclick="showPage('services')">Services</a></li><li><a onclick="showPage('contact')">Contact</a></li></ul></div>
+      <div class="fcol"><h4>Contact</h4><div class="fci"><span class="ico">✉</span><span>hydrolink.infrasolutions@gmail.com</span></div><div class="fci"><span class="ico">📞</span><span>8451027267 — Yash Tiwari</span></div><div class="fci"><span class="ico">📍</span><span>Malad West, near Krishna Hotel, Opp. LM Patel Hospital</span></div></div>
+    </div>
+    <div class="fbot"><p>© 2026 Hydrolink Infrasolutions. All rights reserved.</p><p>Built for clean water futures.</p></div>
+  </div>
+</div><!-- END CONTACT -->
+
+<script>
+/* ─── PARTICLES ─── */
+const cvs=document.getElementById('bg-canvas'),cx=cvs.getContext('2d');
+let W,H,pts=[];
+function rsz(){W=cvs.width=innerWidth;H=cvs.height=innerHeight}rsz();addEventListener('resize',rsz);
+class P{constructor(){this.reset()}reset(){this.x=Math.random()*W;this.y=Math.random()*H;this.vx=(Math.random()-.5)*.2;this.vy=(Math.random()-.5)*.2;this.r=Math.random()*1.3+.3;this.a=Math.random()*.35+.06;this.c=Math.random()>.5?'27,111,255':'0,194,255'}update(){this.x+=this.vx;this.y+=this.vy;if(this.x<0||this.x>W||this.y<0||this.y>H)this.reset()}draw(){cx.beginPath();cx.arc(this.x,this.y,this.r,0,Math.PI*2);cx.fillStyle=`rgba(${this.c},${this.a})`;cx.fill()}}
+for(let i=0;i<80;i++)pts.push(new P());
+function orbs(){const t=Date.now()*.0004;[[W*.14,H*.22,260,'27,111,255',.07],[W*.82,H*.12,200,'0,194,255',.055],[W*.5,H*.86,190,'27,111,255',.045]].forEach(([x,y,r,c,a],i)=>{const p=Math.sin(t+i*2)*26,g=cx.createRadialGradient(x,y,0,x,y,r+p);g.addColorStop(0,`rgba(${c},${a})`);g.addColorStop(1,'rgba(0,0,0,0)');cx.beginPath();cx.arc(x,y,r+p,0,Math.PI*2);cx.fillStyle=g;cx.fill()})}
+function lines(){for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<95){cx.beginPath();cx.strokeStyle=`rgba(27,111,255,${.032*(1-d/95)})`;cx.lineWidth=.5;cx.moveTo(pts[i].x,pts[i].y);cx.lineTo(pts[j].x,pts[j].y);cx.stroke()}}}
+(function anim(){cx.clearRect(0,0,W,H);orbs();lines();pts.forEach(p=>{p.update();p.draw()});requestAnimationFrame(anim)})();
+
+/* ─── NAV SCROLL ─── */
+addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('scrolled',scrollY>40));
+
+/* ─── PAGE SWITCH ─── */
+const pm={'home':'nh','about':'na','services':'ns','contact':'nc'};
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('active'));
+  const el=document.getElementById(pm[id]);if(el)el.classList.add('active');
+  scrollTo({top:0,behavior:'instant'});
+  setTimeout(triggerReveals,80);
+}
+
+/* ─── SCROLL REVEAL ─── */
+function triggerReveals(){
+  const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on');obs.unobserve(e.target)}})},{threshold:.1});
+  document.querySelectorAll('.page.active .rev').forEach(el=>obs.observe(el));
+}
+setTimeout(triggerReveals,100);
+
+/* ─── COUNTER ─── */
+function counter(el,t,s){let v=0;const inc=t/80,id=setInterval(()=>{v+=inc;if(v>=t){v=t;clearInterval(id)}el.textContent=Math.floor(v)+s},18)}
+const co=new IntersectionObserver(en=>en.forEach(e=>{if(e.isIntersecting){document.querySelectorAll('.trn[data-target]').forEach(el=>counter(el,+el.dataset.target,el.dataset.suf));co.disconnect()}}),{threshold:.5});
+const ts=document.querySelector('.htr');if(ts)co.observe(ts);
+
+/* ─── MAGNETIC BUTTONS ─── */
+document.querySelectorAll('.btn-p,.btn-g,.nbtn').forEach(b=>{
+  b.addEventListener('mousemove',e=>{const r=b.getBoundingClientRect(),x=e.clientX-r.left-r.width/2,y=e.clientY-r.top-r.height/2;b.style.transform=`translate(${x*.15}px,${y*.15}px)`});
+  b.addEventListener('mouseleave',()=>b.style.transform='');
+});
+
+/* ─── CARD RIPPLE ─── */
+document.querySelectorAll('.scard,.svcard,.pcard').forEach(c=>{c.addEventListener('click',e=>{const r=c.getBoundingClientRect(),s=document.createElement('span');s.style.cssText=`position:absolute;width:6px;height:6px;background:rgba(27,111,255,.35);border-radius:50%;left:${e.clientX-r.left-3}px;top:${e.clientY-r.top-3}px;transform:scale(0);animation:rip .5s ease-out forwards;pointer-events:none;z-index:10`;c.style.position='relative';c.appendChild(s);const st=document.createElement('style');st.textContent='@keyframes rip{to{transform:scale(80);opacity:0}}';document.head.appendChild(st);setTimeout(()=>s.remove(),500)})});
+
+/* ─── FORM SUBMIT — emails via mailto fallback; replace with PHP for server ─── */
+function handleSubmit(e){
+  e.preventDefault();
+  const form=e.target;
+  const btn=document.getElementById('sbtn');
+  const name=form.name.value;
+  const email=form.email.value;
+  const project=form.project.value;
+  const message=form.message.value;
+
+  btn.textContent='Sending...';btn.disabled=true;btn.style.opacity='.7';
+
+  /* Build mailto link as client-side fallback */
+  const subject=encodeURIComponent(`New Project Enquiry: ${project||'General'} — ${name}`);
+  const body=encodeURIComponent(
+    `Name: ${name}\nEmail: ${email}\nProject Type: ${project||'Not specified'}\n\nDetails:\n${message}`
+  );
+  /* Open mailto — user's mail client will send to hydrolink.infrasolutions@gmail.com */
+  window.location.href=`mailto:hydrolink.infrasolutions@gmail.com?subject=${subject}&body=${body}`;
+
+  setTimeout(()=>{
+    btn.textContent='✓ Request Sent!';
+    btn.classList.add('success-btn');
+    btn.style.opacity='1';
+    setTimeout(()=>{btn.textContent='Submit Request';btn.classList.remove('success-btn');btn.disabled=false;form.reset()},3500);
+  },800);
+}
+</script>
+
+<!-- ════════════════════════════════════════
+  PHP MAIL INTEGRATION INSTRUCTIONS
+  ════════════════════════════════════════
+  1. Rename this file to index.php (or keep .html and create send_mail.php)
+  2. Create send_mail.php on your server:
+
+<?php
+if($_SERVER['REQUEST_METHOD']==='POST'){
+  $to='hydrolink.infrasolutions@gmail.com';
+  $name=htmlspecialchars($_POST['name']);
+  $email=htmlspecialchars($_POST['email']);
+  $project=htmlspecialchars($_POST['project']);
+  $message=htmlspecialchars($_POST['message']);
+  $subject="New Enquiry: $project — $name";
+  $headers="From: $name <$email>\r\nReply-To: $email\r\nContent-Type: text/plain; charset=UTF-8";
+  $body="Name: $name\nEmail: $email\nProject: $project\n\nDetails:\n$message";
+  if(mail($to,$subject,$body,$headers)){echo json_encode(['status'=>'ok']);}
+  else{http_response_code(500);echo json_encode(['status'=>'error']);}
+}
+?>
+
+  3. Change form onsubmit to use fetch('/send_mail.php', {method:'POST', body: new FormData(form)})
+  ════════════════════════════════════════ -->
+</body>
+</html>
